@@ -36,6 +36,7 @@ func handleWrite(conn net.Conn, done chan string) {
 			fmt.Println(err)
 		}
 		_,err=conn.Write(in)
+		fmt.Printf("\x1bM")
 		if err != nil {
 			fmt.Println(err)
 		}
