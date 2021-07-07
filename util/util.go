@@ -71,6 +71,13 @@ func DecideMsgInsertIntoRedis(msg string)  {
 	if len(msg)>len(consts.COME_SUFFIX) && msg[len(msg)-len(consts.COME_SUFFIX):]==consts.COME_SUFFIX{
 		return
 	}
+	count,err:=global.RedisClient.LLen("chat").Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if count>100{
+		go global.RedisClient.LPop("chat")
+	}
 	go global.RedisClient.RPush("chat",msg)
 }
 
