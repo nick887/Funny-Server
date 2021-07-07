@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"github.com/thinkeridea/go-extend/exnet"
 	"strconv"
 )
 
@@ -54,10 +53,13 @@ func HashWithSalt(plainText string) (HashText string) {
 }
 
 func GenerateIntFromIp(ip string) (res uint) {
-	var err error
-	res,err=exnet.IPString2Long(ip)
-	if err != nil {
-		fmt.Println(err)
+	res =0
+	for i := 0; i < len(ip); i++ {
+		if ip[i]>'0'&&ip[i]<'9'{
+			t,_:=strconv.Atoi(string(ip[i]))
+			res+=uint(t)
+		}
 	}
-	return
+	return res% uint(len(consts.NAME))
 }
+

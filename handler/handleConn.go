@@ -13,9 +13,9 @@ func  HandleConn(conn net.Conn)  {
 	ch :=make(chan string)
 	go client_writer.ClientWriter(conn,ch)
 
-	who :=util.GenerateAliasByReplyIndexAndHoleId(uint(util.GenerateIntFromIp(conn.RemoteAddr().String())),1037)
+	who :=util.GenerateAliasByReplyIndexAndHoleId(util.GenerateIntFromIp(conn.RemoteAddr().String()),1037)
 	fmt.Fprintln(conn,"You are "+who)
-	res ,err:= global.RedisClient.LRange("chat",0,30).Result()
+	res ,err:= global.RedisClient.LRange("chat",-100,-1).Result()
 	if err != nil {
 		fmt.Println(err)
 	}else{
