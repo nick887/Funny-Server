@@ -1,12 +1,15 @@
 package broadcaster
 
-import "FunnyServer/global"
+import (
+	"FunnyServer/global"
+	"FunnyServer/util"
+)
 
 func Broadcaster()  {
 	for  {
 		select {
 		case msg:=<-global.Messages:
-			go global.RedisClient.RPush("chat",msg)
+			util.DecideMsgInsertIntoRedis(msg)
 			for cli:=range global.Clients{
 				cli<-msg
 			}

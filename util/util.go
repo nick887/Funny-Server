@@ -1,6 +1,7 @@
 package util
 
 import (
+	"FunnyServer/global"
 	"fmt"
 	"strconv"
 )
@@ -61,5 +62,15 @@ func GenerateIntFromIp(ip string) (res uint) {
 		}
 	}
 	return res% uint(len(consts.NAME))
+}
+
+func DecideMsgInsertIntoRedis(msg string)  {
+	if len(msg)>len(consts.LEAVE_SUFFIX) && msg[len(msg)-len(consts.LEAVE_SUFFIX):]==consts.LEAVE_SUFFIX{
+		return
+	}
+	if len(msg)>len(consts.COME_SUFFIX) && msg[len(msg)-len(consts.COME_SUFFIX):]==consts.COME_SUFFIX{
+		return
+	}
+	go global.RedisClient.RPush("chat",msg)
 }
 

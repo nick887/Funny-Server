@@ -19,4 +19,6 @@ var NAME = []string{
 
 const (
 	MAX_BASE_ALIAS_NUM = 500000
+	COME_SUFFIX="来了"
+	LEAVE_SUFFIX="离开了"
 )
