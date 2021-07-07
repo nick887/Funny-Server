@@ -6,6 +6,7 @@ func Broadcaster()  {
 	for  {
 		select {
 		case msg:=<-global.Messages:
+			go global.RedisClient.RPush("chat",msg)
 			for cli:=range global.Clients{
 				cli<-msg
 			}

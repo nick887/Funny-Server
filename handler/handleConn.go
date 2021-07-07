@@ -5,6 +5,7 @@ import (
 	"FunnyServer/global"
 	"FunnyServer/util"
 	"bufio"
+	"fmt"
 	"net"
 )
 
@@ -13,7 +14,15 @@ func  HandleConn(conn net.Conn)  {
 	go client_writer.ClientWriter(conn,ch)
 
 	who :=util.GenerateAliasByReplyIndexAndHoleId(uint(len(global.Clients)),1037)
-	ch <-"You are "+who
+	fmt.Fprintln(conn,"You are "+who)
+	res ,err:= global.RedisClient.LRange("chat",0,30).Result()
+	if err != nil {
+		fmt.Println(err)
+	}else{
+		for _,msg := range res{
+			ch <- msg
+		}
+	}
 	global.Messages <- who+" has arrived"
 	global.Entering <- ch
 

@@ -21,6 +21,7 @@ func main() {
 	for  {
 		conn,err:=listener.Accept()
 		fmt.Println(conn.RemoteAddr().String()+"  connected")
+		go global.RedisClient.LPush("log",conn.RemoteAddr().String()+"  connected")
 		if err!=nil{
 			log.Print(err)
 			continue
@@ -44,6 +45,8 @@ func initRedis()  {
 		Password: redisSetting.Password,
 		DB:       0,
 	})
+	pong, err := global.RedisClient.Ping().Result()
+	fmt.Println(pong, err)
 }
 
 func initSetting()  {
