@@ -11,3 +11,7 @@ netcat host port
 ```
 netcat 139.224.239.181 1037
 ```
+# 功能
+```
+#在输入内容中键入declare:myName进行昵称修改
+```
