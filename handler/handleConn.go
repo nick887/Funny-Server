@@ -15,7 +15,8 @@ func  HandleConn(conn net.Conn)  {
 	go client_writer.ClientWriter(conn,ch)
 
 	who :=util.GenerateAliasByReplyIndexAndHoleId(util.GenerateIntFromIp(conn.RemoteAddr().String()),1037)
-	fmt.Fprintln(conn,"你是 <"+who+">")
+	fmt.Fprintln(conn,"\x1b[1m 此聊天服务器仅保留最近100条聊天记录，请友善交流！ \x1b[0m")
+	fmt.Fprintln(conn,"你是 "+who)
 	res ,err:= global.RedisClient.LRange("chat",-100,-1).Result()
 	if err != nil {
 		fmt.Println(err)
