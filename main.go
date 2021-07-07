@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	listener,err:=net.Listen("tcp","47.116.139.54:8000")
+	listener,err:=net.Listen("tcp","127.0.0.1:8000")
 	if err != nil {
 		log.Fatal(err)
 	}
