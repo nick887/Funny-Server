@@ -16,7 +16,7 @@ var (
 
 func main() {
 	// 1、与服务端建立连接
-	conn, err := net.Dial("tcp", "localhost:1037")
+	conn, err := net.Dial("tcp", "139.224.239.181:1037")
 	if err != nil {
 		fmt.Printf("conn server failed, err:%v\n", err)
 		return
@@ -67,6 +67,7 @@ func getName(conn net.Conn)  {
 		fmt.Println("Error to read message because of ", err)
 		return
 	}
+	fmt.Println(string(buf[:reqLen-1]))
 	t:=strings.Split(string(buf[:reqLen-1])," ")
 	who=t[len(t)-1]
 }
