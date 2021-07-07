@@ -1,76 +1,51 @@
 package main
 
 import (
-	"FunnyServer/util"
-	"bufio"
-"fmt"
-"log"
-"net"
+	"FunnyServer/broadcaster"
+	"FunnyServer/global"
+	"FunnyServer/handler"
+	"FunnyServer/settings"
+	"fmt"
+	"github.com/go-redis/redis"
+	"log"
+	"net"
 )
 
 func main() {
-	listener,err:=net.Listen("tcp","127.0.0.1:8000")
+	listener,err:=net.Listen("tcp",":9999")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	go broadcaster()
+	go broadcaster.Broadcaster()
 	for  {
 		conn,err:=listener.Accept()
+		fmt.Println(conn.RemoteAddr().String()+"  connected")
 		if err!=nil{
 			log.Print(err)
 			continue
 		}
-		go handleConn(conn)
+		go handler.HandleConn(conn)
 	}
 }
 
-type client chan<- string
 
-var (
-	entering = make(chan client)
-	leaving = make(chan client)
-	messages = make(chan string)
-	clients = make(map[client]bool)
-)
 
-func broadcaster()  {
-	for  {
-		select {
-		case msg:=<-messages:
-			for cli:=range clients{
-				cli<-msg
-			}
-		case cli:=<-entering:
-			clients[cli] =true
-		case cli:=<-leaving:
-			delete(clients,cli)
-			close(cli)
-		}
-	}
+func init() {
+	initSetting()
+	initRedis()
 }
 
-func  handleConn(conn net.Conn)  {
-	ch :=make(chan string)
-	go clientWriter(conn,ch)
-
-	who :=util.GenerateAliasByReplyIndexAndHoleId(uint(len(clients)),1037)
-	ch <-"You are "+who
-	messages <- who+" has arrived"
-	entering <- ch
-
-	input :=bufio.NewScanner(conn)
-	for input.Scan() {
-		messages <- who + " : "+input.Text()
-	}
-
-	leaving <- ch
-	messages <- who+" has left"
-	conn.Close()
+func initRedis()  {
+	redisSetting := global.Settings.RedisSettings
+	global.RedisClient = redis.NewClient(&redis.Options{
+		Network:  "tcp",
+		Addr:      redisSetting.Address + ":" + redisSetting.Port,
+		Password: redisSetting.Password,
+		DB:       0,
+	})
 }
 
-func clientWriter(conn net.Conn,ch <-chan string)  {
-	for msg:=range ch{
-		fmt.Fprintln(conn,msg)
-	}
+func initSetting()  {
+	global.Settings=settings.ReadSettingsFromFile("Settings.json")
 }
