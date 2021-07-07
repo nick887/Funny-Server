@@ -28,6 +28,9 @@ func  HandleConn(conn net.Conn)  {
 
 	input :=bufio.NewScanner(conn)
 	for input.Scan() {
+		if len(input.Text())>8&&(input.Text()[:7] == "declare") {
+			who=input.Text()[8:]
+		}
 		global.Messages <- who + " : "+input.Text()
 	}
 
