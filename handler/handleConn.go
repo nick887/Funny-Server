@@ -13,7 +13,7 @@ func  HandleConn(conn net.Conn)  {
 	ch :=make(chan string)
 	go client_writer.ClientWriter(conn,ch)
 
-	who :=util.GenerateAliasByReplyIndexAndHoleId(uint(len(global.Clients)),1037)
+	who :=util.GenerateAliasByReplyIndexAndHoleId(uint(util.GenerateIntFromIp(conn.RemoteAddr().String())),1037)
 	fmt.Fprintln(conn,"You are "+who)
 	res ,err:= global.RedisClient.LRange("chat",0,30).Result()
 	if err != nil {
